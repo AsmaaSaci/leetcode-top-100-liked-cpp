@@ -1,18 +1,23 @@
-class Solution {
+class MedianFinder {
+    priority_queue<int> left;
+    priority_queue<int, vector<int>, greater<int>> right;
 public:
-    vector<int> topKFrequent(vector<int>& nums, int k) {
-        unordered_map<int,int> freq;
-        for (int n : nums) freq[n]++;
-        priority_queue<pair<int,int>, vector<pair<int,int>>, greater<pair<int,int>>> pq;
-        for (auto& [num, count] : freq) {
-            pq.push({count, num});
-            if (pq.size() > k) pq.pop();
+    MedianFinder() {}
+    
+    void addNum(int num) {
+        if (left.empty() || num <= left.top()) left.push(num);
+        else right.push(num);
+        if (left.size() > right.size() + 1) {
+            right.push(left.top());
+            left.pop();
+        } else if (right.size() > left.size()) {
+            left.push(right.top());
+            right.pop();
         }
-        vector<int> res;
-        while (!pq.empty()) {
-            res.push_back(pq.top().second);
-            pq.pop();
-        }
-        return res;
+    }
+    
+    double findMedian() {
+        if (left.size() == right.size()) return (left.top() + right.top()) / 2.0;
+        return left.top();
     }
 };
